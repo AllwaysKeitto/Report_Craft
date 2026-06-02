@@ -1,0 +1,5 @@
+.venv/
+.vscode/
+**/__pycache__/
+reports_cache.db
+generated_pdfs/

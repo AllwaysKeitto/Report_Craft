@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  web-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: report_craft_container
+    ports:
+      - "8000:8000"
+    volumes:
+      # Делаем локальную папку для сгенерированных PDF, чтобы они сохранялись на компьютере, а не исчезали внутри контейнера
+      - ./generated_pdfs:/backend/generated_pdfs
+    environment:
+      - ENV=production
+    restart: always

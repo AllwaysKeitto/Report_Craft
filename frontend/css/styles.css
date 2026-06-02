@@ -1,0 +1,699 @@
+/* 1. ПЕРЕМЕННЫЕ И БАЗОВЫЕ СТИЛИ (Дизайн-система) */
+:root {
+    --bg-main: #f8fafc;         /* Светлый фон страницы (Slate 50) */
+    --bg-surface: #ffffff;      /* Фон карточек и панелей */
+    --sidebar-bg: #1e293b;      /* Темный глубокий сайдбар (Slate 800) */
+    
+    --text-primary: #0f172a;    /* Основной текст (Slate 900) */
+    --text-secondary: #64748b;  /* Второстепенный текст (Slate 500) */
+    --text-muted: #94a3b8;      /* Текст в сайдбаре / подписи */
+    
+    --border-color: #e2e8f0;    /* Границы элементов (Slate 200) */
+    --accent-color: #0b99ff;    /* Чистый синий Figma / ReportCraft акцент */
+    
+    --primary-color: #5a67d8;   /* Фиолетово-синий для кнопок покупки/входа */
+    --primary-hover: #4c51bf;
+    
+    --success-color: #10b981;   /* Изумрудный зеленый для купленных вещей */
+    --success-hover: #059669;
+    --danger-color: #ef4444;    /* Красный для ошибок и выхода */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* 2. ОБЩАЯ РАЗМЕТКА ИНТЕРФЕЙСА (Layout) */
+.dashboard-layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2.5rem;
+    background-color: var(--bg-main);
+}
+
+/* Элементы Сайдбара */
+.sidebar .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.75rem 1rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.sidebar .nav-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+}
+
+.sidebar .nav-item.active {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* 3. КНОПКИ (Компоненты) */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+}
+
+/* Основная кнопка (Вход, Регистрация, Купить) */
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--primary-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(90, 103, 216, 0.25);
+}
+
+/* Кнопка успеха (Открыть отчет, Сгенерировать) */
+.btn-success {
+    background-color: var(--success-color) !important;
+    color: #ffffff !important;
+}
+
+.btn-success:hover:not(:disabled) {
+    background-color: var(--success-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+/* Состояние загрузки / блокировки */
+.btn:disabled {
+    background-color: var(--border-color) !important;
+    color: var(--text-secondary) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* 4. КАТАЛОГ И КАРТОЧКИ ШАБЛОНОВ (ReportCraft Модуль) */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.template-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.template-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+}
+
+/* Шапка карточки */
+.template-card .card-header {
+    margin-bottom: 1.5rem;
+}
+
+.template-card .template-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.template-card .template-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Подвал карточки */
+.template-card .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto; 
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.template-card .price-tag {
+    flex-shrink: 0;
+}
+
+.template-card .price-val {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+/* Пейджи и статусы */
+.template-card .badge-free {
+    display: inline-block;
+    padding: 0.35rem 0.6 rem;
+    background-color: #ecfdf5;
+    color: var(--success-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.template-card .action-block {
+    flex-grow: 1;
+}
+
+/* Статусы состояний загрузки */
+.loading, .empty-state, .error-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* 5. ФОРМЫ АВТОРИЗАЦИИ (Вход / Регистрация) */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #1e1b4b 0%, #311042 100%);
+}
+
+.auth-card {
+    background: var(--bg-surface);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 420px;
+}
+
+.auth-card h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: var(--accent-color);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(11, 153, 255, 0.15);
+}
+
+/* Блоки ошибок под формами */
+#auth-error, #reg-error {
+    background-color: #fef2f2;
+    color: var(--danger-color);
+    border: 1px solid #fee2e2;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    display: none;
+}
+
+#reg-success {
+    background-color: #ecfdf5;
+    color: var(--success-color);
+    border: 1px solid #d1fae5;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    display: none;
+}
+
+/* 6. РЕЖИМ ПРЕЗЕНТАЦИИ И КОНСТРУКТОР (Управление Слоями) */
+.layer-item.active {
+    background-color: #e2e8f0 !important;
+    border-left: 3px solid var(--accent-color) !important;
+}
+.layer-item.active .layer-name-span {
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+.layer-item:hover {
+    background-color: #f1f5f9;
+}
+
+/* 7. ГЛОБАЛЬНЫЙ ИЗОЛИРОВАННЫЙ РЕЖИМ ПРОСМОТРА (Презентация) */
+body.presentation-active {
+    background-color: #1a1a1a !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Скрываем только панели управления, но ОСТАВЛЯЕМ футер с подсказками */
+body.presentation-active .toolbar,
+body.presentation-active .sidebar,
+body.presentation-active .properties-panel,
+body.presentation-active .right-properties-panel,
+body.presentation-active .navbar,
+body.presentation-active #layers-tree-container,
+body.presentation-active #editor-left-sidebar,
+body.presentation-active #editor-right-sidebar,
+body.presentation-active .editor-bottom-footer {
+    display: none !important;
+}
+
+/* Стилизация панели подсказок под темную тему презентации */
+body.presentation-active div#constructor-zoom-footer,
+body.presentation-active #constructor-zoom-footer[style] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: fixed !important;
+    bottom: 16px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: rgba(15, 23, 42, 0.9) !important; 
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid #334155 !important;
+    border-radius: 30px !important;
+    padding: 6px 20px !important;
+    color: #94a3b8 !important;
+    z-index: 999999 !important;
+    box-sizing: border-box !important;
+    width: auto !important;
+    height: auto !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7) !important;
+}
+body.presentation-active #constructor-zoom-footer span,
+body.presentation-active #constructor-zoom-footer div,
+body.presentation-active #constructor-zoom-footer kbd {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Исключаем кнопку удаления из подсказок презентации (так как редактировать нельзя) */
+body.presentation-active #constructor-zoom-footer #zoom-footer-hints {
+    color: #cbd5e1 !important;
+}
+
+/* Настройка контраста элементов внутри подсказки на темном фоне */
+body.presentation-active #constructor-zoom-footer kbd {
+    background: #334155 !important;
+    color: #f8fafc !important;
+    border-color: #475569 !important;
+}
+
+body.presentation-active #constructor-zoom-footer b {
+    color: #38bdf8 !important; /* Подсвечиваем текущий масштаб голубым */
+}
+
+/* Контейнеры разметки */
+body.presentation-active .figma-editor-container,
+body.presentation-active #editor-main-container {
+    display: block !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 99999 !important;
+    background: #1a1a1a !important;
+}
+
+/* Область просмотра */
+body.presentation-active .viewport {
+    width: 100vw !important;
+    height: 100vh !important;
+    left: 0 !important;
+    top: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #1a1a1a !important;
+    background-image: none !important;
+    overflow: hidden !important;
+}
+
+/* Холст */
+body.presentation-active #canvas-blueprint,
+body.presentation-active .blueprint-canvas {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* Лист отчета */
+body.presentation-active .canvas-sheet {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+    background: #ffffff !important; 
+    border: 1px solid #2e2e2e !important;
+    border-radius: 4px !important;
+}
+
+body.presentation-active .canvas-sheet * {
+    visibility: visible !important;
+}
+
+body.presentation-active .canvas-sheet .widget,
+body.presentation-active .canvas-sheet [id*="widget"] {
+    display: block !important;
+}
+
+/* ИДЕАЛЬНАЯ СИНХРОНИЗАЦИЯ ПОДСКАЗОК ДЛЯ ИСКЛЮЧЕНИЯ МЕРЦАНИЯ */
+
+/* 1. ОБЫЧНЫЙ РЕЖИМ КОНСТРУКТОРА */
+#constructor-zoom-footer .presentation-only-hints {
+    display: none !important;
+}
+
+/* 2. РЕЖИМ ПРЕЗЕНТАЦИИ */
+/* Прячем старый span, который дергается из-за JS */
+body.presentation-active #zoom-footer-separator,
+body.presentation-active #zoom-footer-hints {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Включаем защищенный дубликат */
+body.presentation-active #constructor-zoom-footer .presentation-only-hints {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: #cbd5e1 !important; /* Цвет текста один в один как в конструкторе */
+    font-size: 12px !important; /* Синхронизируем размер шрифта */
+}
+
+/* Оформление кнопок внутри новой подсказки (копия стилей конструктора) */
+body.presentation-active #constructor-zoom-footer .presentation-only-hints kbd {
+    background: #334155 !important;
+    color: #f8fafc !important;
+    border: 1px solid #475569 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-family: monospace !important;
+    font-size: 11px !important;
+    margin: 0 2px !important;
+    display: inline-block !important;
+}
+
+/* Контейнер-капсула в режиме презентации */
+body.presentation-active div#constructor-zoom-footer,
+body.presentation-active #constructor-zoom-footer[style] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: fixed !important;
+    bottom: 16px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: rgba(15, 23, 42, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid #334155 !important;
+    border-radius: 30px !important;
+    padding: 6px 20px !important;
+    z-index: 999999 !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7) !important;
+    width: auto !important;
+    height: auto !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+/* 8. УПРАВЛЕНИЕ КАТАЛОГОМ (Только для Администратора) */
+.template-card {
+    position: relative; /* Чтобы можно было позиционировать кнопку удаления в углу */
+}
+
+/* Кнопка удаления шаблона */
+.btn-delete-template {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(239, 68, 68, 0.1); /* Легкий прозрачный красный */
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.btn-delete-template:hover {
+    background: #ef4444 !important; /* Насыщенный красный при наведении */
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    transform: translateY(-1px);
+}
+
+/*  9. СТИЛИ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ (Landing Page) */
+body.landing-page {
+    background-color: var(--bg-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Навигация лендинга */
+.navbar-landing {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+.navbar-landing .brand {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.navbar-landing .brand i {
+    color: var(--accent-color);
+}
+
+.navbar-landing .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.navbar-landing .nav-item-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.navbar-landing .nav-item-link:hover {
+    color: var(--text-primary);
+}
+
+.navbar-landing .btn-nav {
+    width: auto;
+    padding: 0.6rem 1.2rem;
+    text-decoration: none;
+}
+
+/* Секция Hero */
+.landing-main {
+    flex: 1;
+}
+
+.hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.5rem;
+}
+
+.hero-title .accent-text {
+    color: var(--accent-color);
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.hero-action-wrapper {
+    max-width: 240px;
+    width: 100%;
+}
+
+.hero-action-wrapper .btn {
+    text-decoration: none;
+    padding: 0.85rem 2rem;
+    box-shadow: 0 4px 12px rgba(90, 103, 216, 0.2);
+}
+
+/* Секция О проекте */
+.about-section {
+    background-color: var(--bg-surface);
+    border-top: 1px solid var(--border-color);
+    padding: 5rem 2rem;
+}
+
+.about-section .section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.about-section .section-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 3.5rem;
+    letter-spacing: -0.03em;
+}
+
+/* Модификации карточек преимуществ */
+.feature-card-landing {
+    min-height: 260px;
+    justify-content: flex-start !important;
+}
+
+.feature-card-landing .card-header {
+    margin-bottom: 0 !important;
+}
+
+/* Кастомные плашки для иконок */
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.icon-blue {
+    background: rgba(11, 153, 255, 0.1);
+    color: var(--accent-color);
+}
+
+.icon-green {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+}
+
+.icon-purple {
+    background: rgba(90, 103, 216, 0.1);
+    color: var(--primary-color);
+}
+
+/* Подвал лендинга */
+.landing-footer {
+    background-color: var(--sidebar-bg);
+    color: var(--text-muted);
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: auto;
+}

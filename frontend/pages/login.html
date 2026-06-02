@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация | Конструктор Отчетов</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="auth-container">
+
+    <div class="auth-card" id="login-box">
+        <h2 style="margin-bottom: 1.5rem; text-align: center; color: var(--text-primary);">Вход в систему</h2>
+        <div id="auth-error" style="color: var(--danger-color); display: none; margin-bottom: 1rem; font-size: 0.9rem;"></div>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">Имя пользователя</label>
+                <input type="text" id="username" class="form-control" required placeholder="admin или analyst">
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" class="form-control" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary">Войти</button>
+        </form>
+        <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+            Нет аккаунта? <a href="#" onclick="document.getElementById('login-box').style.display='none'; document.getElementById('register-box').style.display='block';" style="color: var(--primary-color);">Зарегистрироваться</a>
+        </p>
+    </div>
+
+    <div class="auth-card" id="register-box" style="display: none;">
+        <h2 style="margin-bottom: 1.5rem; text-align: center; color: var(--text-primary);">Регистрация</h2>
+        <div id="reg-error" style="color: var(--danger-color); display: none; margin-bottom: 1rem; font-size: 0.9rem;"></div>
+        <div id="reg-success" style="color: var(--success-color); display: none; margin-bottom: 1rem; font-size: 0.9rem;"></div>
+        
+        <form id="register-form">
+            <div class="form-group">
+                <label for="reg-username">Имя пользователя</label>
+                <input type="text" id="reg-username" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-email">Email</label>
+                <input type="email" id="reg-email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-password">Пароль</label>
+                <input type="password" id="reg-password" class="form-control" required placeholder="Минимум 6 символов">
+            </div>
+            <div class="form-group">
+                <label for="reg-role">Выберите роль</label>
+                <select id="reg-role" class="form-control" style="background: white;">
+                    <option value="2">Пользователь (Аналитик / Маркетолог)</option>
+                    <option value="1">Администратор (Разработчик шаблонов)</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Создать аккаунт</button>
+        </form>
+        <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+            Уже есть аккаунт? <a href="#" onclick="document.getElementById('register-box').style.display='none'; document.getElementById('login-box').style.display='block';" style="color: var(--primary-color);">Войти</a>
+        </p>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+</body>
+</html>

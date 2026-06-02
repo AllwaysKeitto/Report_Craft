@@ -1,0 +1,472 @@
+/* ОСНОВНАЯ РАЗМЕТКА РЕДАКТОРА */
+.figma-editor-container {
+    display: grid;
+    grid-template-columns: 280px 1fr 320px;
+    grid-template-rows: 48px 1fr;
+    height: 100vh;
+    background-color: #f7fafc;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    overflow: hidden;
+}
+
+/* ВЕРХНИЙ ТУЛБАР */
+.toolbar {
+    grid-column: span 3;
+    height: 48px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    z-index: 100;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+/* САЙДБАРЫ И ПАНЕЛИ СВОЙСТВ */
+.sidebar, .properties-panel {
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 90;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+.properties-panel {
+    border-right: none;
+    border-left: 1px solid #e2e8f0;
+}
+
+/* ВЬЮПОРТ И СЕТКА БЕСКОНЕЧНОГО ХОЛСТА */
+.viewport {
+    position: relative;
+    overflow: hidden;
+    background-color: #f1f3f5;
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 24px 24px;
+    outline: none;
+    flex-grow: 1;
+}
+
+.canvas-blueprint {
+    position: absolute;
+    transform-origin: 0 0;
+    will-change: transform;
+}
+
+/* ЛИСТЫ ДОКУМЕНТА (A4) */
+.canvas-sheet {
+    position: absolute;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), 0 1px 8px rgba(0, 0, 0, 0.02);
+    border: 1px solid #e2e8f0;
+    border-radius: 2px;
+    box-sizing: border-box;
+    cursor: move;
+    touch-action: none; /* Передаем управление interact.js */
+}
+.canvas-sheet.active-sheet {
+    border: 1px solid rgba(11, 153, 255, 0.6);
+    box-shadow: 0 0 0 2px #0b99ff, 0 12px 40px rgba(11, 153, 255, 0.15);
+}
+
+/* Класс выделения листа на холсте */
+.canvas-sheet.selected-sheet {
+    outline: 2px solid #0b99ff !important;
+    outline-offset: -2px !important;
+    box-shadow: 0 0 0 6px rgba(11, 153, 255, 0.25), 0 20px 25px -5px rgba(0, 0, 0, 0.15) !important;
+    z-index: 100 !important;
+}
+
+/* ВИДЖЕТЫ И КОНТЕЙНЕРЫ ОБЪЕКТОВ */
+.canvas-widget {
+    position: absolute;
+    box-sizing: border-box !important;
+    cursor: move;
+    padding: 0;
+    margin: 0;
+    pointer-events: auto !important;
+    user-select: none;
+    -webkit-user-drag: none;
+    touch-action: none; /* Заставляет браузер передавать жесты в interact.js */
+}
+.canvas-widget * {
+    box-sizing: border-box !important;
+}
+.canvas-widget.locked {
+    cursor: not-allowed !important;
+}
+
+/* СТИЛИ ГЕОМЕТРИЧЕСКИХ ФИГУР */
+.canvas-widget.shape-circle {
+    border-radius: 50% !important;
+}
+.canvas-widget.shape-triangle {
+    background-color: transparent !important;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* ХОВЕРЫ И ВЫДЕЛЕНИЯ KОНТУРОВ FIGMA */
+.canvas-widget::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; right: -1px; bottom: -1px;
+    border: 1px solid transparent;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 10;
+}
+.canvas-widget:hover::before {
+    border-color: rgba(11, 153, 255, 0.4);
+}
+.canvas-widget.selected::before {
+    border-color: #0b99ff;
+    box-shadow: 0 0 0 1px #0b99ff;
+}
+
+/* РУЧКИ ТРАНСФОРМАЦИИ И ТЯГИ КЛИКОВ */
+.canvas-widget.selected .resize-handle {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background: #ffffff;
+    border: 1.5px solid #0b99ff;
+    z-index: 25;
+    will-change: transform;
+}
+.canvas-widget.selected .resize-handle:hover {
+    background: #0b99ff;
+    transform: scale(1.3);
+}
+
+.canvas-widget.selected .handle-e { top: 50%; right: -4px; transform: translateY(-50%); cursor: e-resize; }
+.canvas-widget.selected .handle-s { bottom: -4px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+.canvas-widget.selected .handle-se { bottom: -4px; right: -4px; cursor: se-resize; }
+
+/* РУЧКА ВРАЩЕНИЯ ОБЪЕКТА */
+.canvas-widget.selected .rotate-handle {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background: #0b99ff;
+    border: 1.5px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: grab;
+    z-index: 25;
+}
+.canvas-widget.selected .rotate-handle::after {
+    content: '';
+    position: absolute;
+    bottom: -14px; left: 4px;
+    width: 1px; height: 14px;
+    background: #0b99ff;
+}
+
+/* ИНТЕРФЕЙС МЕНЕДЖЕРА СЛОЕВ */
+.sidebar-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #4a5568;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 8px 0;
+}
+
+.layer-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #4a5568;
+    margin-bottom: 2px;
+}
+.layer-item-row:hover { background: #f7fafc; }
+.layer-item-row.selected-layer { background: #eaf5ff; color: #0b99ff; font-weight: 500; }
+
+.layer-actions-left { display: flex; align-items: center; gap: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.layer-actions-right { display: flex; gap: 4px; opacity: 0.2; }
+.layer-item-row:hover .layer-actions-right, .layer-item-row.selected-layer .layer-actions-right { opacity: 1; }
+
+.layer-action-icon-btn {
+    background: none; border: none; padding: 2px 4px; cursor: pointer; color: #a0aec0; font-size: 11px;
+}
+.layer-action-icon-btn:hover { color: #4a5568; }
+.layer-action-icon-btn.active { color: #e53e3e; opacity: 1; }
+
+/* УМНЫЕ ФИОЛЕТОВЫЕ НАПРАВЛЯЮЩИЕ */
+.smart-guide {
+    position: absolute;
+    background-color: #d53f8c;
+    z-index: 9999;
+    pointer-events: none;
+    display: none;
+}
+.smart-guide-h { height: 1px; left: 0; right: 0; }
+.smart-guide-v { width: 1px; top: 0; bottom: 0; }
+
+/* ЛИНЕЙКИ МАСШТАБИРОВАНИЯ НА ХОЛСТЕ */
+.ruler-horizontal, .ruler-vertical { position: absolute; background: #ffffff; z-index: 80; }
+.ruler-horizontal { top: 0; left: 16px; right: 0; height: 16px; border-bottom: 1px solid #e2e8f0; }
+.ruler-vertical { top: 16px; left: 0; bottom: 0; width: 16px; border-right: 1px solid #e2e8f0; }
+.ruler-corner { position: absolute; top:0; left:0; width:16px; height:16px; background:#ffffff; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; z-index:85; }
+.ruler-tick { position: absolute; background: #cbd5e1; }
+.ruler-text { position: absolute; font-size: 8px; color: #94a3b8; transform: scale(0.8); transform-origin: left top; }
+.rulers-hidden #ruler-x, .rulers-hidden #ruler-y, .rulers-hidden #ruler-corner { display: none !important; }
+
+/* ИНТЕРАКТИВНОЕ ПЕРО: ТОЧКИ ЧЕРТЕЖА */
+.pen-active-node {
+    position: absolute; width: 6px; height: 6px; background: #ffffff; border: 2px solid #0b99ff; border-radius: 50%;
+    transform: translate(-4px, -4px); z-index: 2000; cursor: pointer;
+}
+.pen-active-node:hover { background: #e53e3e; border-color: #ffffff; transform: translate(-4px, -4px) scale(1.3); }
+
+/* ЭЛЕМЕНТЫ ТАБЛИЦ КОНСТРУКТОРА */
+.widget-table-container {
+    width: 100%; height: 100%; overflow: auto; background: #ffffff; border-radius: inherit;
+}
+.figma-custom-table {
+    width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; background: #ffffff;
+}
+.figma-custom-table th, .figma-custom-table td {
+    padding: 6px 8px; border: 1px solid #e2e8f0; outline: none; box-sizing: border-box;
+}
+.figma-custom-table th {
+    background: #f8fafc; font-weight: 600; color: #4a5568;
+}
+
+/* ИНДИКАТОРЫ МАСШТАБА И КНОПКИ */
+.zoom-indicator {
+    position: absolute; bottom: 16px; right: 336px; background: rgba(30, 41, 59, 0.9);
+    padding: 6px 12px; border-radius: 6px; color: #ffffff; font-size: 11px; z-index: 95;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); backdrop-filter: blur(4px);
+    display: flex; align-items: center; gap: 8px;
+}
+.zoom-indicator kbd { background: #475569; padding: 1px 4px; border-radius: 3px; font-size: 10px; }
+
+.toolbar-btn {
+    background: transparent; border: 1px solid transparent; padding: 6px 10px; border-radius: 4px;
+    font-size: 12px; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #4a5568; transition: all 0.15s;
+}
+.toolbar-btn:hover { background: #f1f5f9; border-color: #e2e8f0; }
+.toolbar-btn.active { background: #eaf5ff; border-color: #0b99ff; color: #0b99ff; font-weight: 500; }
+
+.form-control {
+    width: 100%; border: 1px solid #cbd5e1; padding: 6px; border-radius: 4px; font-size: 12px; outline: none; box-sizing: border-box; background: #ffffff;
+}
+.form-control:focus { border-color: #0b99ff; box-shadow: 0 0 0 2px rgba(11, 153, 255, 0.15); }
+
+/* РЕЖИМ ПРЕЗЕНТАЦИИ */
+body.presentation-mode .toolbar, 
+body.presentation-mode .sidebar, 
+body.presentation-mode .properties-panel, 
+body.presentation-mode .zoom-indicator {
+    display: none !important;
+}
+body.presentation-mode .figma-editor-container {
+    grid-template-columns: 1fr; grid-template-rows: 1fr;
+}
+body.presentation-mode .viewport { background: #0f172a; }
+
+/* Отключаем перехват событий мыши у содержимого виджетов во время перетаскивания, 
+   чтобы детекция interact.js всегда шла четко по контейнеру виджета */
+.chart-container, svg, canvas, img {
+    pointer-events: none !important; 
+}
+
+/* Защита векторных SVG от вылетания за границы контейнера при ресайзе */
+.canvas-widget svg {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Адаптивность и защита растровых картинок (PNG, JPG) от искажений */
+.canvas-widget img {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover; 
+    object-position: center;
+    image-rendering: -webkit-optimize-contrast; 
+    image-rendering: high-quality;
+} 
+
+/* Важный CSS для работы ресайза interact.js */
+.canvas-widget {
+    position: absolute;
+    box-sizing: border-box; /* Чтобы рамки не увеличивали фактический размер */
+    touch-action: none;     /* Отключает стандартные жесты браузера */
+}
+
+/* Стилизация зон изменения размера */
+.interact-extand-end {
+    cursor: nwse-resize !important;
+}
+
+/* Если используются встроенные ручки interact.js */
+.canvas-widget::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 10px;
+    height: 10px;
+    cursor: se-resize;
+    background: transparent; /* Или сделай квадратик, например #0b99ff */
+}
+
+.rotate-handle {
+    position: absolute;
+    top: -30px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    background: #ffffff;
+    border: 2px solid #0b99ff;
+    border-radius: 50%;
+    cursor: grab;
+    display: none; 
+    z-index: 10;
+}
+
+.rotate-handle:active {
+    cursor: grabbing;
+}
+
+/* Линия, соединяющая точку с элементом */
+.rotate-handle::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 1px;
+    height: 20px;
+    background: #0b99ff;
+    transform: translateX(-50%);
+    z-index: -1;
+}
+
+.canvas-widget.selected .rotate-handle {
+    display: block;
+}
+
+/* РЕЖИМА ПРЕЗЕНТАЦИИ (Скрытие всех панелей и геометрии узла) */
+
+body.presentation-mode .toolbar, 
+body.presentation-mode .sidebar, 
+body.presentation-mode .properties-panel, 
+body.presentation-mode .zoom-indicator,
+body.presentation-active .toolbar, 
+body.presentation-active .sidebar, 
+body.presentation-active .properties-panel, 
+body.presentation-active .zoom-indicator {
+    display: none !important;
+}
+
+/* Перестраиваем сетку редактора в 1 колонку, чтобы холст занял 100% экрана */
+body.presentation-mode .figma-editor-container,
+body.presentation-active .figma-editor-container {
+    grid-template-columns: 1fr !important; 
+    grid-template-rows: 1fr !important;
+}
+
+/* Меняем фон вьюпорта на темно-синий/презентационный */
+body.presentation-mode .viewport,
+body.presentation-active .viewport { 
+    background: #0f172a !important; 
+    background-image: none !important; /* Убираем сетку figma */
+}
+
+/* Скрываем синие рамки выделения, ручки ресайза и поворота во время презентации */
+body.presentation-mode .canvas-widget::before,
+body.presentation-active .canvas-widget::before,
+body.presentation-mode .canvas-widget:hover::before,
+body.presentation-active .canvas-widget:hover::before {
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+body.presentation-mode .resize-handle,
+body.presentation-active .resize-handle,
+body.presentation-mode .rotate-handle,
+body.presentation-active .rotate-handle {
+    display: none !important;
+}
+
+/* Скрываем рамку выделения у листов */
+body.presentation-mode .canvas-sheet.selected-sheet,
+body.presentation-active .canvas-sheet.selected-sheet {
+    outline: none !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Скрываем линейки (рулетки) в режиме презентации */
+body.presentation-active .ruler-horizontal,
+body.presentation-active .ruler-vertical,
+body.presentation-active .ruler-corner {
+    display: none !important;
+}
+
+/* 2. Отменяем скрытие zoom-indicator, превращаем его в центральную подсказку */
+body.presentation-active .zoom-indicator {
+    display: flex !important; /* Возвращаем видимость */
+    bottom: 24px !important;  /* Слегка приподнимаем над краем экрана */
+    right: auto !important;   /* Сбрасываем жесткую привязку к правому сайдбару figma */
+    left: 50% !important;     /* Сдвигаем на центр */
+    transform: translateX(-50%) !important; /* Идеально центрируем по горизонтали */
+    background: rgba(15, 23, 42, 0.85) !important; /* Делаем фон темнее и презентационнее */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 3. Прячем блок масштаба и разделительную черту, оставляем только инструкцию перемещения */
+body.presentation-active .zoom-indicator > span:first-child,
+body.presentation-active .zoom-indicator > div {
+    display: none !important;
+}
+
+/* 4. Стилизуем текст инструкции внутри плашки во время презентации */
+body.presentation-active .zoom-indicator span:last-child {
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    color: #e2e8f0;
+}
+
+/* Изменяем текст на чистую навигацию (убираем упоминание кнопки Delete) */
+body.presentation-active .zoom-indicator kbd {
+    background: #0b99ff !important; /* Подсвечиваем клавишу Space фирменным синим цветом */
+    color: #ffffff !important;
+    font-weight: bold;
+}
+
+.canvas-sheet, .canvas-widget {
+    pointer-events: var(--presentation-mode-pointer, auto) !important;
+}
+
+/* Разрешаем событиям мыши проходить сквозь обертку виджета внутрь eCharts */
+.canvas-widget {
+    pointer-events: auto;
+}
+
+/* для внутренних контейнеров eCharts включаем абсолютный приоритет интерактива */
+.chart-container, .chart-container svg, .chart-container div {
+    pointer-events: auto !important;
+    cursor: default !important;
+}
+
+/* Если виджет активно перетаскивается (drag) или ресайзится — временно отключаем интерактив графика, чтобы не тупило */
+.interact-dragging .chart-container,
+.interact-resizing .chart-container {
+    pointer-events: none !important;
+}
